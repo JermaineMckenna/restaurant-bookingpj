@@ -1,0 +1,92 @@
+{% extends 'homepageapp/base.html' %}
+{% load static %}
+
+{% block title %}Menu{% endblock %}
+
+{% block content %}
+
+<!-- Menu Hero Section -->
+<section class="menu-hero-section text-center py-5 bg-light">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Our Menu</h1>
+        <p class="lead mb-4">Indulge in the finest Italian cuisine, handcrafted with love and tradition.</p>
+    </div>
+</section>
+
+<!-- Menu Cards Section -->
+<section class="menu-preview py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Signature Dishes</h2>
+        <div class="row g-4">
+            <!-- Pasta Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/homemadepasta.jpg' %}" class="card-img-top" alt="Homemade Pasta">
+                    <div class="card-body">
+                        <h5 class="card-title">Homemade Pasta</h5>
+                        <p class="card-text text-muted">Freshly made daily with rich, slow-cooked sauces straight from Italy.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Pizza Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/woodfiredpizza.jpg' %}" class="card-img-top" alt="Wood-Fired Pizza">
+                    <div class="card-body">
+                        <h5 class="card-title">Wood-Fired Pizza</h5>
+                        <p class="card-text text-muted">Crispy Neapolitan-style crust topped with fresh ingredients and cooked in a traditional wood-fired oven.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Tiramisu Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/tiramisu.jpg' %}" class="card-img-top" alt="Tiramisu">
+                    <div class="card-body">
+                        <h5 class="card-title">Tiramisu</h5>
+                        <p class="card-text text-muted">Our signature dessert — creamy, rich, and perfectly balanced with a hint of coffee.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional dishes example -->
+        <h2 class="fw-bold mt-5 mb-4">More Italian Favorites</h2>
+        <div class="row g-4">
+            <!-- Risotto Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/risotto.jpg' %}" class="card-img-top" alt="Risotto">
+                    <div class="card-body">
+                        <h5 class="card-title">Mushroom Risotto</h5>
+                        <p class="card-text text-muted">Creamy risotto with wild mushrooms and parmesan, slow-cooked to perfection.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Bruschetta Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/bruschetta.jpg' %}" class="card-img-top" alt="Bruschetta">
+                    <div class="card-body">
+                        <h5 class="card-title">Classic Bruschetta</h5>
+                        <p class="card-text text-muted">Toasted bread topped with fresh tomatoes, basil, and olive oil — a timeless Italian starter.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Gelato Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/gelato.jpg' %}" class="card-img-top" alt="Gelato">
+                    <div class="card-body">
+                        <h5 class="card-title">Italian Gelato</h5>
+                        <p class="card-text text-muted">Smooth, creamy gelato in classic flavors — the perfect sweet finish.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'booking' %}" class="btn btn-danger btn-lg rounded-pill mt-5">Book a Table</a>
+    </div>
+</section>
+
+{% endblock %}

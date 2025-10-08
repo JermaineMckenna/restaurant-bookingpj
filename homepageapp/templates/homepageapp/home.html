@@ -1,0 +1,120 @@
+{% extends 'homepageapp/base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- Welcome / Description Section -->
+<section class="hero-section text-center py-5">
+    <div class="hero-content">
+        <h1 class="display-3 fw-bold">Welcome to La Tavola Italiana</h1>
+        <p class="lead mb-4">Experience the warmth of authentic Italian dining and indulge in the finest Italian cuisine.</p>
+        <img src="{% static 'homepageapp/images/heroimage.jpeg' %}" class="card-img-top" alt="Platter">
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section bg-light py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-5">What Our Guests Say</h2>
+
+    <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+      <div class="carousel-inner">
+
+        <div class="carousel-item active">
+          <div class="testimonial p-4 mx-auto bg-white rounded shadow-sm" style="max-width: 700px;">
+            <p class="fst-italic mb-4">"Absolutely loved the atmosphere and the food was divine! The pizza tastes like it’s straight from Naples."</p>
+            <h6 class="fw-semibold text-danger mb-0">– Maria Rossi</h6>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="testimonial p-4 mx-auto bg-white rounded shadow-sm" style="max-width: 700px;">
+            <p class="fst-italic mb-4">"A wonderful dining experience! The staff were welcoming and the homemade pasta was incredible."</p>
+            <h6 class="fw-semibold text-danger mb-0">– James Thompson</h6>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="testimonial p-4 mx-auto bg-white rounded shadow-sm" style="max-width: 700px;">
+            <p class="fst-italic mb-4">"Best tiramisu I’ve ever had. A must-visit for anyone who loves authentic Italian food!"</p>
+            <h6 class="fw-semibold text-danger mb-0">– Sofia Bianchi</h6>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Carousel Controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- About / Chef Section -->
+<section class="about-section container py-5 text-center">
+    <h2 class="fw-bold mb-3">A Taste of Tradition</h2>
+    <p class="text-muted mb-5 mx-auto" style="max-width: 700px;">
+        At La Tavola Italiana, every dish tells a story — handcrafted with passion, love,
+        and the finest ingredients imported from Italy.
+    </p>
+    <img src="{% static 'homepageapp/images/chef.jpg' %}" alt="Our Chef" class="img-fluid rounded shadow" style="max-width: 600px;">
+</section>
+
+<!-- Menu Preview Section -->
+<section class="menu-preview py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4">Our Signature Dishes</h2>
+        <div class="row g-4">
+            <!-- Pasta Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/homemadepasta.jpg' %}" class="card-img-top" alt="Pasta">
+                    <div class="card-body">
+                        <h5 class="card-title">Homemade Pasta</h5>
+                        <p class="card-text text-muted">Freshly made daily, served with rich, slow-cooked sauces.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Pizza Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/woodfiredpizza.jpg' %}" class="card-img-top" alt="Pizza">
+                    <div class="card-body">
+                        <h5 class="card-title">Wood-Fired Pizza</h5>
+                        <p class="card-text text-muted">Crispy base, fresh toppings — a true Neapolitan classic.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Tiramisu Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm">
+                    <img src="{% static 'homepageapp/images/tiramisu.jpg' %}" class="card-img-top" alt="Tiramisu">
+                    <div class="card-body">
+                        <h5 class="card-title">Tiramisu</h5>
+                        <p class="card-text text-muted">Our signature dessert — rich, creamy, and irresistibly smooth.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="{% url 'menu' %}" class="btn btn-outline-dark mt-4 rounded-pill">View Full Menu</a>
+    </div>
+</section>
+
+<!-- Booking Call-to-Action -->
+<section class="booking-cta text-center text-white py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-3">Ready for an Unforgettable Evening?</h2>
+        <p class="mb-4">Reserve your table now and experience authentic Italian dining at its best.</p>
+        <a href="{% url 'booking' %}" class="btn btn-danger btn-lg rounded-pill">Book a Table</a>
+    </div>
+</section>
+
+{% endblock %}
