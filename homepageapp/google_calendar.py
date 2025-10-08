@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import pytz
 
 
-SERVICE_ACCOUNT_FILE = 'project3rb/credentials.json'
+SERVICE_ACCOUNT_FILE = 'credentials.json'
 
 #
 CALENDAR_ID = 'restaurantbookingproject@restaurant-booking-calendar.iam.gserviceaccount.com'

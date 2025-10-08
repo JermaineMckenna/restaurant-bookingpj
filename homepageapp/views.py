@@ -5,7 +5,9 @@ from rest_framework import viewsets
 from .serializers import BookingSerializer, ContactMessageSerializer
 
 # Import the Google Calendar integration
-from .google_calendar import add_booking_event
+from .google_calendar import create_event
+from datetime import datetime, timedelta
+import pytz
 
 
 # 🏠 Homepage
@@ -25,19 +27,28 @@ def booking(request):
         if form.is_valid():
             booking = form.save()  # Save booking to database
 
+            # Prepare datetime objects for Google Calendar
+            tz = pytz.timezone('Europe/London')
+            start_datetime = datetime.combine(booking.date, booking.time)
+            start_datetime = tz.localize(start_datetime)
+            end_datetime = start_datetime + timedelta(hours=2)  # Example: 2-hour slot
+
             # Create Google Calendar event
-            event_link = add_booking_event(
-                name=booking.name,
-                email=booking.email,
-                phone=booking.phone,
-                date=booking.date,
-                time=booking.time,
-                guests=booking.guests,
-                special_requests=booking.special_requests
+            event = create_event(
+                title=f"Booking: {booking.name}",
+                start_datetime=start_datetime,
+                end_datetime=end_datetime,
+                description=(
+                    f"Name: {booking.name}\n"
+                    f"Email: {booking.email}\n"
+                    f"Phone: {booking.phone}\n"
+                    f"Guests: {booking.guests}\n"
+                    f"Special Requests: {booking.special_requests}"
+                )
             )
 
             # ✅ Pass the event link to the success page
-            return render(request, 'homepageapp/booking_success.html', {'event_link': event_link})
+            return render(request, 'homepageapp/booking_success.html', {'event_link': event.get('htmlLink')})
     else:
         form = BookingForm()
     return render(request, 'homepageapp/booking.html', {'form': form})

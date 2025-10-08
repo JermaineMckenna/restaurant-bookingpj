@@ -30,10 +30,10 @@
 
                     <!-- Left side links -->
                     <li class="nav-item mx-2">
-                        <a class="nav-link active" aria-current="page" href="homepageapp/homee.html">Home</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="homepageapp/menu.html">Menu</a>
+                        <a class="nav-link" href="{% url 'menu' %}">Menu</a>
                     </li>
 
                     <!-- Center restaurant name (not clickable) -->
@@ -45,7 +45,7 @@
 
                     <!-- Right side link -->
                     <li class="nav-item mx-2">
-                        <a class="nav-link" href="homepageapp/booking.html">Booking</a>
+                        <a class="nav-link" href="{% url 'booking' %}">Booking</a>
                     </li>
                     <li class="nav-item">
                      <a class="nav-link" href="{% url 'contact' %}">Contact</a>

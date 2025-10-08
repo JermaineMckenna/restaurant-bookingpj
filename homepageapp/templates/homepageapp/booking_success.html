@@ -1,0 +1,19 @@
+{% extends "homepageapp/base.html" %}
+{% block content %}
+<div class="container text-center mt-5">
+    <h1 class="text-success mb-4">✅ Booking Confirmed!</h1>
+    <p>Your booking has been successfully saved and added to Google Calendar.</p>
+
+    {% if event_link %}
+        <p>
+            <a href="{{ event_link }}" target="_blank" class="btn btn-primary mt-3">
+                View Event in Google Calendar
+            </a>
+        </p>
+    {% else %}
+        <p class="text-muted mt-3">No event link available.</p>
+    {% endif %}
+
+    <a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+</div>
+{% endblock %}
