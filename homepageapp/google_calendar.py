@@ -1,38 +1,39 @@
 # project3rb/homepageapp/google_calendar.py
 
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
+import os
+import json
 from datetime import datetime, timedelta
 import pytz
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
 
-
-SERVICE_ACCOUNT_FILE = 'credentials.json'
-
-#
+# Google Calendar setup
 CALENDAR_ID = 'restaurantbookingproject@restaurant-booking-calendar.iam.gserviceaccount.com'
-
-# Optional default timezone
 TIMEZONE = 'Europe/London'
 
-# Authenticate with the Google Calendar API using the service account
-credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE,
-    scopes=['https://www.googleapis.com/auth/calendar']
-)
+# Load credentials from environment variable (Heroku)
+GOOGLE_CREDS = os.environ.get("GOOGLE_CREDS")
 
-service = build('calendar', 'v3', credentials=credentials)
+if GOOGLE_CREDS:
+    info = json.loads(GOOGLE_CREDS)
+    credentials = service_account.Credentials.from_service_account_info(
+        info,
+        scopes=['https://www.googleapis.com/auth/calendar']
+    )
+    service = build('calendar', 'v3', credentials=credentials)
+else:
+    credentials = None
+    service = None
 
 
 def create_event(title, start_datetime, end_datetime, description=''):
     """
     Creates a new event in the Google Calendar.
-    
-    Args:
-        title (str): Event title
-        start_datetime (datetime): Event start time (aware datetime)
-        end_datetime (datetime): Event end time (aware datetime)
-        description (str): Event description
     """
+    if not service:
+        print("⚠️ Google Calendar service not configured.")
+        return None
+
     event = {
         'summary': title,
         'description': description,
@@ -48,17 +49,3 @@ def create_event(title, start_datetime, end_datetime, description=''):
 
     created_event = service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
     return created_event
-
-
-# Example usage:
-if __name__ == "__main__":
-    tz = pytz.timezone(TIMEZONE)
-    start = datetime.now(tz) + timedelta(hours=1)
-    end = start + timedelta(hours=2)
-    event = create_event(
-        title="Test Booking Event",
-        start_datetime=start,
-        end_datetime=end,
-        description="This is a test booking event."
-    )
-    print(f"Event created: {event.get('htmlLink')}")
