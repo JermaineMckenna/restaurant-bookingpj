@@ -1,4 +1,3 @@
-
 from pathlib import Path
 import os
 import dj_database_url
@@ -16,12 +15,14 @@ SECRET_KEY = os.environ.get(
     'django-insecure-nh5fofm#p5i8#e+zf&-au1x&=kqcjgw)kx4cgo#)f@4_5dw)ww'
 )
 
-DEBUG = os.environ.get('DEBUG', '') != 'False'
+# Default DEBUG to False in production
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
+# Hosts allowed to access the app
 ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
     'project3rb-d3edfb5c8d9d.herokuapp.com',
+    'localhost',
+    '127.0.0.1',
 ]
 
 # -------------------------------
@@ -44,7 +45,7 @@ INSTALLED_APPS = [
 # -------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # for static files on Heroku
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # serves static files when DEBUG=False
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -61,7 +62,7 @@ ROOT_URLCONF = 'project3rb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  # optional if you add templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,12 +80,11 @@ WSGI_APPLICATION = 'project3rb.wsgi.application'
 # -------------------------------
 # DATABASES
 # -------------------------------
-# Use local PostgreSQL when running locally, and Heroku Postgres in production
-
+# Use Heroku Postgres in production, fallback to local PostgreSQL
 if os.environ.get('DATABASE_URL'):
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
+            default=os.environ['DATABASE_URL'],
             conn_max_age=600,
             ssl_require=True
         )
