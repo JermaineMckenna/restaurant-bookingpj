@@ -25,6 +25,9 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
 ]
 
+# ✅ TEMPORARY: Allow iframe embedding for Am I Responsive screenshot
+X_FRAME_OPTIONS = 'ALLOWALL'
+
 # -------------------------------
 # INSTALLED APPS
 # -------------------------------
