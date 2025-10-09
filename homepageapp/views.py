@@ -27,28 +27,39 @@ def booking(request):
         if form.is_valid():
             booking = form.save()  # Save booking to database
 
-            # Prepare datetime objects for Google Calendar
+            # Prepare datetime for calendar
             tz = pytz.timezone('Europe/London')
-            start_datetime = datetime.combine(booking.date, booking.time)
-            start_datetime = tz.localize(start_datetime)
-            end_datetime = start_datetime + timedelta(hours=2)  # Example: 2-hour slot
+            start_datetime = tz.localize(datetime.combine(booking.date, booking.time))
+            end_datetime = start_datetime + timedelta(hours=2)  # Default slot length
 
-            # Create Google Calendar event
-            event = create_event(
-                title=f"Booking: {booking.name}",
-                start_datetime=start_datetime,
-                end_datetime=end_datetime,
-                description=(
-                    f"Name: {booking.name}\n"
-                    f"Email: {booking.email}\n"
-                    f"Phone: {booking.phone}\n"
-                    f"Guests: {booking.guests}\n"
-                    f"Special Requests: {booking.special_requests}"
+            # Try to create a Google Calendar event safely
+            try:
+                event = create_event(
+                    title=f"Booking: {booking.name}",
+                    start_datetime=start_datetime,
+                    end_datetime=end_datetime,
+                    description=(
+                        f"Name: {booking.name}\n"
+                        f"Email: {booking.email}\n"
+                        f"Phone: {booking.phone}\n"
+                        f"Guests: {booking.guests}\n"
+                        f"Special Requests: {booking.special_requests or 'N/A'}"
+                    )
                 )
-            )
-
-            # ✅ Pass the event link to the success page
-            return render(request, 'homepageapp/booking_success.html', {'event_link': event.get('htmlLink')})
+                # Only show event link if calendar event was created successfully
+                return render(
+                    request,
+                    'homepageapp/booking_success.html',
+                    {'event_link': event.get('htmlLink') if event else None}
+                )
+            except Exception as e:
+                print("⚠️ Google Calendar Error:", e)
+                # Even if API fails, show success page for user
+                return render(
+                    request,
+                    'homepageapp/booking_success.html',
+                    {'event_link': None, 'error': 'Google Calendar event could not be created.'}
+                )
     else:
         form = BookingForm()
     return render(request, 'homepageapp/booking.html', {'form': form})
@@ -83,11 +94,11 @@ def contact_success(request):
 
 # 🌐 API: Booking
 class BookingViewSet(viewsets.ModelViewSet):
-    queryset = Booking.objects.all()
+    queryset = Booking.objects.all().order_by('-created_at')
     serializer_class = BookingSerializer
 
 
 # 🌐 API: Contact Messages
 class ContactMessageViewSet(viewsets.ModelViewSet):
-    queryset = ContactMessage.objects.all()
+    queryset = ContactMessage.objects.all().order_by('-created_at')
     serializer_class = ContactMessageSerializer

@@ -29,15 +29,20 @@ ALLOWED_HOSTS = [
 # INSTALLED APPS
 # -------------------------------
 INSTALLED_APPS = [
+    # Django default apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'widget_tweaks',
-    'homepageapp',
+
+    # Third-party apps
     'rest_framework',
+    'widget_tweaks',
+
+    # Local apps
+    'homepageapp',
 ]
 
 # -------------------------------
@@ -45,7 +50,7 @@ INSTALLED_APPS = [
 # -------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # serves static files when DEBUG=False
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Handles static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,6 +59,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# -------------------------------
+# URL CONFIGURATION
+# -------------------------------
 ROOT_URLCONF = 'project3rb.urls'
 
 # -------------------------------
@@ -62,7 +70,7 @@ ROOT_URLCONF = 'project3rb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # optional if you add templates folder
+        'DIRS': [BASE_DIR / 'templates'],  # optional templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,6 +83,9 @@ TEMPLATES = [
     },
 ]
 
+# -------------------------------
+# WSGI
+# -------------------------------
 WSGI_APPLICATION = 'project3rb.wsgi.application'
 
 # -------------------------------
@@ -115,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # INTERNATIONALIZATION
 # -------------------------------
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'  # ✅ Matches your restaurant timezone
 USE_I18N = True
 USE_TZ = True
 
@@ -127,6 +138,20 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # -------------------------------
+# MEDIA FILES (if used later)
+# -------------------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# -------------------------------
 # DEFAULT PRIMARY KEY FIELD
 # -------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -------------------------------
+# GOOGLE CALENDAR / API CONFIG
+# -------------------------------
+# These credentials are stored securely in Heroku config vars
+GOOGLE_CALENDAR_ID = 'restaurantbookingproject@restaurant-booking-calendar.iam.gserviceaccount.com'
+GOOGLE_TIMEZONE = 'Europe/London'
+GOOGLE_CREDS = os.environ.get("GOOGLE_CREDS")
