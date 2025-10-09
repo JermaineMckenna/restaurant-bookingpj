@@ -1,36 +1,37 @@
 import os
 import json
+import base64
 from datetime import datetime, timedelta
 import pytz
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-# Google Calendar setup
+# Google Calendar configuration
 CALENDAR_ID = 'restaurantbookingproject@restaurant-booking-calendar.iam.gserviceaccount.com'
 TIMEZONE = 'Europe/London'
-
-GOOGLE_CREDS = os.environ.get("GOOGLE_CREDS")
 
 credentials = None
 service = None
 
+GOOGLE_CREDS = os.environ.get("GOOGLE_CREDS")
+
 if GOOGLE_CREDS:
     try:
-        # Handle double-encoded JSON (Heroku often adds escape chars)
-        creds_data = json.loads(GOOGLE_CREDS)
-
-        # If creds_data is still a string, parse again
-        if isinstance(creds_data, str):
-            creds_data = json.loads(creds_data)
+        # Decode base64 string from Heroku into JSON text
+        decoded_json = base64.b64decode(GOOGLE_CREDS).decode("utf-8")
+        creds_data = json.loads(decoded_json)
 
         credentials = service_account.Credentials.from_service_account_info(
             creds_data,
             scopes=['https://www.googleapis.com/auth/calendar']
         )
+
         service = build('calendar', 'v3', credentials=credentials)
         print("✅ Google Calendar connected successfully.")
+
     except Exception as e:
         print(f"⚠️ Error setting up Google Calendar: {e}")
+
 else:
     print("⚠️ GOOGLE_CREDS environment variable not found.")
 
