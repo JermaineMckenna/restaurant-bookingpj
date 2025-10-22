@@ -365,6 +365,18 @@ GitHub Projects – For project organization and tracking milestones.
 The W3C Markup Validator and W3C CSS Validator, JS Validator plus Python code checker were all different services that were used to validate every page of the project to ensure there were no syntax errors in the project.
 Lighthouse on chrome was also used to check the websites integrity during the testing process.
 
+<U>HTML5 Results</u>
+
+![htmlresults](homepageapp/static/homepageapp/images/htmlvalid.jpg)
+No errors shown from HTML Checker.
+
+![cssresults](homepageapp/static/homepageapp/images/cssvalid.jpg)
+No errors shown from CSS Checker.
+
+![jsvalidator](homepageapp/static/homepageapp/images/jsvalid.jpg)
+One error found through JS checker was wrong, it stated the first two lines of a file was incorrect this was !DOCTYPE html & html lang="en" both integral parts of a websites integrity.
+
+![pythonchecker](homepageapp/static/homepageapp/images/)
 
 
 
