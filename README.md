@@ -376,7 +376,38 @@ No errors shown from CSS Checker.
 ![jsvalidator](homepageapp/static/homepageapp/images/jsvalid.jpg)
 One error found through JS checker was wrong, it stated the first two lines of a file was incorrect this was !DOCTYPE html & html lang="en" both integral parts of a websites integrity.
 
-![pythonchecker](homepageapp/static/homepageapp/images/)
+Views.py - 
+
+![pythonchecker](homepageapp/static/homepageapp/images/pythonvalid.jpg)
+
+urls.py - 
+
+![pythonchecker2](homepageapp/static/homepageapp/images/pythonvalid2.jpg)
+
+models.py - 
+
+![pythonchecker3](homepageapp/static/homepageapp/images/pythonvalid3.jpg)
+
+serializers.py - 
+
+![pythonchecker4](homepageapp/static/homepageapp/images/pythonvalid4.jpg)
+
+google_calendar.py - 
+
+![pythonchecker5](homepageapp/static/homepageapp/images/pythonvalid5.jpg)
+
+settings.py - 
+
+![pythonchecker6](homepageapp/static/homepageapp/images/pythonvalid6.jpg)
+
+###<u>Testing User Stories From User Experience (UX) Section</u>
+
+<u>First Time Visitor Goals</u>
+
+- 
+
+
+
 
 
 
