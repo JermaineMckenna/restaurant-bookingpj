@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.urls import reverse
 from .forms import BookingForm, ContactMessageForm
 from .models import Booking, ContactMessage
 from rest_framework import viewsets
@@ -20,7 +22,7 @@ def menu(request):
     return render(request, 'homepageapp/menu.html')
 
 
-# 📅 Booking form page with Google Calendar integration
+# 📅 Booking form page with Google Calendar integration (uses PRG)
 def booking(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
@@ -32,7 +34,8 @@ def booking(request):
             start_datetime = tz.localize(datetime.combine(booking.date, booking.time))
             end_datetime = start_datetime + timedelta(hours=2)  # Default slot length
 
-            # Try to create a Google Calendar event safely
+            # google calendar event
+            event_link = None
             try:
                 event = create_event(
                     title=f"Booking: {booking.name}",
@@ -46,28 +49,37 @@ def booking(request):
                         f"Special Requests: {booking.special_requests or 'N/A'}"
                     )
                 )
-                # Only show event link if calendar event was created successfully
-                return render(
-                    request,
-                    'homepageapp/booking_success.html',
-                    {'event_link': event.get('htmlLink') if event else None}
-                )
+                if isinstance(event, dict):
+                    event_link = event.get('htmlLink')
             except Exception as e:
+                # Log server-side; keep UX clean
                 print("⚠️ Google Calendar Error:", e)
-                # Even if API fails, show success page for user
-                return render(
+                messages.warning(
                     request,
-                    'homepageapp/booking_success.html',
-                    {'event_link': None, 'error': 'Google Calendar event could not be created.'}
+                    "Your booking was saved, but we couldn’t create a calendar entry this time."
                 )
+
+            # Store the link in session for the success page and redirect
+            request.session['event_link'] = event_link
+            request.session['last_booking_name'] = booking.name
+            request.session['last_booking_when'] = f"{booking.date} at {booking.time}"
+
+            return redirect('booking_success')
+        # If invalid, fall through and re-render with errors
     else:
         form = BookingForm()
+
     return render(request, 'homepageapp/booking.html', {'form': form})
 
 
-# ✅ Booking success page
+# ✅ Booking success page (pulls info from session; safe if nothing there)
 def booking_success(request):
-    return render(request, 'homepageapp/booking_success.html')
+    context = {
+        'event_link': request.session.pop('event_link', None),
+        'booking_name': request.session.pop('last_booking_name', None),
+        'booking_when': request.session.pop('last_booking_when', None),
+    }
+    return render(request, 'homepageapp/booking_success.html', context)
 
 
 # 🧱 Base template
@@ -75,13 +87,21 @@ def base(request):
     return render(request, 'homepageapp/base.html')
 
 
-# 📩 Contact form page
+# 📩 Contact form page (PRG with messages)
 def contact(request):
     if request.method == 'POST':
         form = ContactMessageForm(request.POST)
         if form.is_valid():
-            form.save()
+            try:
+                form.save()
+            except Exception as e:
+                print("[Contact] Save error:", e)
+                messages.error(request, "Sorry, something went wrong saving your message.")
+                return render(request, 'homepageapp/contact.html', {'form': form})
+
+            messages.success(request, "Thanks! Your message has been sent.")
             return redirect('contact_success')
+        # invalid: fall through to re-render
     else:
         form = ContactMessageForm()
     return render(request, 'homepageapp/contact.html', {'form': form})

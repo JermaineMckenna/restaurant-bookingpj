@@ -456,6 +456,10 @@ settings.py -
 
 - Confirmation messages reinforce trust, showing that each new booking or message has been received successfully.
 
+![contacttu](homepageapp/static/homepageapp/images/contacttu.jpg)
+![bookingtu](homepageapp/static/homepageapp/images/bookingtu.jpg)
+![formtu2](homepageapp/static/homepageapp/images/formtu2.jpg)
+
 ---
 
 ### 📲 Further Testing
@@ -473,6 +477,9 @@ The project was tested using browser developer tools in Google Chrome, Firefox, 
 
 - The site was also tested using online responsiveness testing tools (such as Am I Responsive and Responsinator) to confirm that content displays properly across mobile, tablet, and desktop viewports.
 
+![mbresponsive](homepageapp/static/homepageapp/images/mbresponsive1.png)
+![mbresponsive2](homepageapp/static/homepageapp/images/mbresponsive2.PNG)
+![mbresponsive3](homepageapp/static/homepageapp/images/mbresponsive3.png)
 <u>Browser Compatibility</u>
 
 The project was tested on the following browsers:
@@ -692,6 +699,27 @@ heroku run python3 manage.py collectstatic --noinpu
 10. Open Deployed App:
 
 - heroku open
+
+**Forking the Repository**
+
+If you would like to contribute to the project or experiment with changes without affecting the original repository, you can fork it.
+
+Go to the GitHub [repository](https://github.com/JermaineMckenna/restaurant-bookingpj)
+
+- In the top-right corner, click the Fork button.
+
+- This will create a copy of the repository under your own GitHub account.
+
+- From your forked repository, follow the Cloning Steps above to set it up locally.
+
+- You can make and commit your own changes safely, then optionally submit a pull request to the original repository for review.
+
+### 🙏 Acknowledgements
+
+- My mentor at Code Institute
+
+- Teacher at West Herts College
+
 
 
 
