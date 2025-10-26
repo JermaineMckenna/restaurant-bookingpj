@@ -339,7 +339,7 @@ Allows Django to connect easily to Heroku’s PostgreSQL database via an environ
 
 - Handles server-side operations and database connections.
 
-<u>Balsamiq Wireframes</u>
+<u>Wireframes</u>
 
 - Used during the planning phase to design basic page layouts and UX structure.
 
@@ -438,7 +438,9 @@ settings.py -
 
 - Responsiveness allows returning visitors on mobile devices to complete bookings just as easily as on desktop.
 
-
+![APIstest](homepageapp/static/homepageapp/images/apitest.jpg)
+![APIstest2](homepageapp/static/homepageapp/images/apitests2.jpg)
+![APIstest3](homepageapp/static/homepageapp/images/apitests3.jpg)
 
 ---
 
