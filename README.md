@@ -82,7 +82,7 @@ The restaurant website uses a warm and authentic Italian-inspired color palette,
 These colors work together to create a consistent brand identity that is both modern and inspired by traditional Italian design sensibilities.
 
 ---
-###<u>Typography</u>
+### Typography 
 
 Two fonts were chosen to complement the restaurant’s aesthetic and ensure readability across all devices:
 
@@ -96,8 +96,13 @@ Both fonts are imported via Google Fonts and are supported by standard sans-seri
 
 This pairing creates a clear hierarchy between headings and body text while keeping the designs visually balanced.
 
+### ✍️ Wireframes
+
+![bwireframes](homepageapp/static/homepageapp/images/bwireframes.jpg)
+![bwireframes](homepageapp/static/homepageapp/images/bwireframes2.jpg)
+![bwireframes](homepageapp/static/homepageapp/images/bwireframes3.jpg)
 ---
-###<u>Imagery</u>
+### Imagery 
 
 Imagery plays a vital role in the restaurants visual experience:
 
@@ -110,7 +115,7 @@ Imagery plays a vital role in the restaurants visual experience:
 Overall the projects imagery focuses on food, culture and hospitality, all key emotional triggers for users looking to book at a restaurant.
 
 ---
-###<u>Layout and Structure</u>
+### Layout and Structure 
 
 The layout follows a mobile-first responsive design, structured with Bootstrap’s grid system for consistency and scalability.
 All sections — such as the hero, about, menu preview, booking form, and contact — adapt fluidly to various screen sizes, ensuring an optimal experience across devices from small smartphones to large monitors.
@@ -128,7 +133,7 @@ Key layout features:
 - Balanced use of white space and color accents to keep the site visually calm and readable
 
 ---
-###<u>Accessibility</u>
+### Accessibility
 
 Accessibility best practices were implemented throughout the design.
 
@@ -143,7 +148,7 @@ Accessibility best practices were implemented throughout the design.
 
 ## ✨ Features
 
-###<u>Homepage</u>
+### Homepage 
 
 A welcoming hero section introduces visitors to the restaurant with a clear call-to-action button for making a booking.
 Includes a short introductory paragraph about the restaurant’s theme, atmosphere, and dining experience.
@@ -253,7 +258,7 @@ Django’s built-in admin interface provides a simple way to manage:
 
 - Additional visual enhancements such as image galleries and reviews section.
 ---
-###<u>🧰 Technologies Used</u>
+### 🧰 Technologies Used 
 
 <u>Languages Used</u>
 
@@ -583,6 +588,8 @@ The **dj_database_url** and **whitenoise** packages were configured for static f
 - [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) and [Poppins](https://fonts.google.com/specimen/Poppins) are both google fonts applied to the project.
 
 - [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/) were used to source images for the background and menu for the project.
+
+- [Balsamiq](https://balsamiq.com/?gad_source=1&gad_campaignid=203404003&gbraid=0AAAAAD3BuzNfXcAkxmvS274FiJVTcjmxA&gclid=Cj0KCQjwsPzHBhDCARIsALlWNG2gMfQrkUQcvQaKrtw4mun_zb2S-WqSgKPoyrC3UbuMvsZ_0O-NnAkaAjD9EALw_wcB) was used to create the wireframes for the project.
 
 **The Project was developed by Jermaine McKenna.**
 
