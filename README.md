@@ -61,7 +61,7 @@ The site aims to simplify restaurant reservations by offering a digital alternat
 - As a frequent user, I expect the website to stay fast, modern, and responsive each time I visit, with a consistent design and reliable functionality.
 ---
 
-###<u>Design</u>
+### Design
 
 <u>Colour Scheme</u>
 
@@ -270,7 +270,7 @@ Django’s built-in admin interface provides a simple way to manage:
 
 - Python 3 – for server-side logic, database management, and API handling within Django.
 
-###<u>Frameworks, Libraries & Tools</u>
+### Frameworks, Libraries & Tools
 
 <u>Django 4.2</u>
 
@@ -355,7 +355,7 @@ Allows Django to connect easily to Heroku’s PostgreSQL database via an environ
 <u>Font Awesome</u>
 Provides iconography used in the footer, navbar, and buttons for better UI/UX.
 
-###<u>Additional Tools</u>
+### Additional Tools
 
 VS Code – Primary code editor for development.
 
@@ -405,7 +405,7 @@ settings.py -
 
 ![pythonchecker6](homepageapp/static/homepageapp/images/pythonvalid6.jpg)
 
-###<u>Testing User Stories From User Experience (UX) Section</u>
+### Testing User Stories From User Experience (UX) Section
 
 <u>First Time Visitor Goals</u>
 
