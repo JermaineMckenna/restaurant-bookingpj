@@ -8,7 +8,7 @@
 <section class="contact-section container py-5">
     <h1 class="text-center fw-bold mb-4">Contact La Tavola Italiana</h1>
     <p class="text-center mb-5">
-        We’d love to hear from you! Whether you’re enquiring about a booking, private event, or feedback — 
+        We’d love to hear from you! Whether you’re enquiring about a booking, private event, or feedback —
         our team will get back to you as soon as possible.
     </p>
 
@@ -18,7 +18,12 @@
             <div class="p-4 rounded shadow-sm bg-white">
                 <form method="POST" novalidate>
                     {% csrf_token %}
-                    {{ form.non_field_errors }}
+
+                    {% if form.non_field_errors %}
+                      <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                      </div>
+                    {% endif %}
 
                     {% for field in form %}
                         <div class="mb-3">
@@ -32,7 +37,7 @@
 
                     <div class="text-center mt-4">
                         <button type="submit" class="btn btn-danger btn-lg rounded-pill px-5">
-                            <i class="bi bi-envelope-fill"></i> Send Message
+                            Send Message
                         </button>
                     </div>
                 </form>
