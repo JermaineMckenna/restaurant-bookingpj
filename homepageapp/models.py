@@ -32,7 +32,7 @@ class Booking(models.Model):
     )
 
     # ✅ Reference code to allow users to manage bookings without accounts/login
-    reference_code = models.CharField(max_length=12, unique=True, editable=False)
+    reference_code = models.CharField(max_length=20, unique=True, editable=False)
 
     name = models.CharField(max_length=100)
     email = models.EmailField()
