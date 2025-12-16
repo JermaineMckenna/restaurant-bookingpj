@@ -4,7 +4,6 @@ import uuid
 
 
 # 🍽️ Table Model
-# Represents each physical table that can be booked by customers.
 class Table(models.Model):
     table_number = models.IntegerField(unique=True)
     capacity = models.PositiveIntegerField()
@@ -14,7 +13,6 @@ class Table(models.Model):
 
 
 # 🧾 Booking Model
-# Stores all restaurant bookings linked to both users and tables.
 class Booking(models.Model):
     user = models.ForeignKey(
         User,
@@ -54,7 +52,6 @@ class Booking(models.Model):
 
 
 # 🍴 Menu Item Model
-# Optional menu model for displaying or managing food items.
 class MenuItem(models.Model):
     CATEGORY_CHOICES = [
         ("starter", "Starter"),
@@ -72,7 +69,6 @@ class MenuItem(models.Model):
 
 
 # 💬 Contact Message Model
-# Stores customer contact form submissions.
 class ContactMessage(models.Model):
     user = models.ForeignKey(
         User,
@@ -86,11 +82,6 @@ class ContactMessage(models.Model):
     email = models.EmailField()
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if not self.reference_code:
-            self.reference_code = uuid.uuid4().hex[:12].upper()
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Message from {self.name} ({self.email})"

@@ -4,7 +4,6 @@ from .forms import (
     BookingForm,
     ContactMessageForm,
     FindBookingForm,
-    FindMessageForm,
 )
 from .models import Booking, ContactMessage, MenuItem
 from rest_framework import viewsets
@@ -172,23 +171,19 @@ def contact(request):
         form = ContactMessageForm(request.POST)
         if form.is_valid():
             try:
-                msg_obj = form.save()
+                form.save()
             except Exception as e:
                 print("[Contact] Save error:", e)
-                messages.error(request, "Sorry, something went wrong saving your message.")
+                messages.error(request, "Sorry something went wrong saving your message.")
                 return render(request, 'homepageapp/contact.html', {'form': form})
 
             name = form.cleaned_data.get("name")
             email = form.cleaned_data.get("email")
 
-            messages.success(
-                request,
-                f"✅ Thanks {name}! Your message has been saved. Reference: {msg_obj.reference_code}"
-            )
+            messages.success(request, f"✅ Thanks {name}! Your message has been saved. We’ll reply to {email}.")
 
             request.session["last_contact_name"] = name
             request.session["last_contact_email"] = email
-            request.session["last_contact_ref"] = msg_obj.reference_code
 
             return redirect('contact_success')
     else:
@@ -201,62 +196,8 @@ def contact_success(request):
     context = {
         "contact_name": request.session.pop("last_contact_name", None),
         "contact_email": request.session.pop("last_contact_email", None),
-        "contact_ref": request.session.pop("last_contact_ref", None),
     }
     return render(request, 'homepageapp/contact_success.html', context)
-
-
-# ✅ NEW: Message CRUD (no login) — Locate by reference + email
-def manage_message(request):
-    if request.method == "POST":
-        form = FindMessageForm(request.POST)
-        if form.is_valid():
-            ref = form.cleaned_data["reference_code"]
-            email = form.cleaned_data["email"]
-
-            msg_obj = ContactMessage.objects.filter(reference_code=ref, email=email).first()
-            if not msg_obj:
-                messages.error(request, "❌ Message not found. Please check your reference code and email.")
-                return render(request, "homepageapp/manage_message.html", {"form": form})
-
-            messages.success(request, "✅ Message found.")
-            return redirect("message_detail", reference_code=msg_obj.reference_code)
-    else:
-        form = FindMessageForm()
-
-    return render(request, "homepageapp/manage_message.html", {"form": form})
-
-
-def message_detail(request, reference_code):
-    msg_obj = get_object_or_404(ContactMessage, reference_code=reference_code)
-    return render(request, "homepageapp/message_detail.html", {"message_obj": msg_obj})
-
-
-def message_update(request, reference_code):
-    msg_obj = get_object_or_404(ContactMessage, reference_code=reference_code)
-
-    if request.method == "POST":
-        form = ContactMessageForm(request.POST, instance=msg_obj)
-        if form.is_valid():
-            updated = form.save()
-            messages.success(request, f"✅ Message {updated.reference_code} updated successfully.")
-            return redirect("message_detail", reference_code=updated.reference_code)
-    else:
-        form = ContactMessageForm(instance=msg_obj)
-
-    return render(request, "homepageapp/message_update.html", {"form": form, "message_obj": msg_obj})
-
-
-def message_delete(request, reference_code):
-    msg_obj = get_object_or_404(ContactMessage, reference_code=reference_code)
-
-    if request.method == "POST":
-        ref = msg_obj.reference_code
-        msg_obj.delete()
-        messages.success(request, f"🗑️ Message {ref} deleted successfully.")
-        return redirect("manage_message")
-
-    return render(request, "homepageapp/message_confirm_delete.html", {"message_obj": msg_obj})
 
 
 # 🌐 API: Booking
