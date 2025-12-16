@@ -1,16 +1,32 @@
 {% extends "homepageapp/base.html" %}
+{% block title %}Edit Booking{% endblock %}
+
 {% block content %}
 <div class="container mt-5" style="max-width: 720px;">
   <h2 class="mb-3">Edit booking</h2>
-  <p class="text-muted">Reference: <strong>{{ booking.reference_code }}</strong></p>
+
+  <p class="text-muted mb-3">
+    ✏️ You are editing booking <strong>{{ booking.reference_code }}</strong>.
+    Submitting this form will update the stored booking details.
+  </p>
+
+  <!-- Current booking summary (immediate feedback) -->
+  <div class="alert alert-info">
+    <strong>Current booking details:</strong><br>
+    {{ booking.date }} at {{ booking.time }} for {{ booking.guests }} guest(s)
+  </div>
 
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+
     <div class="d-flex gap-2">
       <button class="btn btn-primary" type="submit">Save changes</button>
-      <a class="btn btn-secondary" href="{% url 'booking_detail' booking.reference_code %}">Cancel</a>
+      <a class="btn btn-secondary" href="{% url 'booking_detail' booking.reference_code %}">
+        Cancel
+      </a>
     </div>
   </form>
 </div>
 {% endblock %}
+

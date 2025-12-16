@@ -59,12 +59,20 @@ def booking(request):
                     "Your booking was saved, but we couldn’t create a calendar entry this time."
                 )
 
+            # ✅ Immediate & specific feedback about what was stored
+            messages.success(
+                request,
+                f"✅ Booking saved: {booking.date} at {booking.time} for {booking.guests} guest(s). "
+                f"Reference: {booking.reference_code}"
+            )
+
             # Store info in session for the success page and redirect
             request.session['event_link'] = event_link
             request.session['last_booking_name'] = booking.name
             request.session['last_booking_when'] = f"{booking.date} at {booking.time}"
+            request.session['last_booking_guests'] = booking.guests
 
-            # ✅ NEW: Store booking reference so user can manage it later (CRUD)
+            # Store booking reference so user can manage it later (CRUD)
             request.session['last_booking_ref'] = booking.reference_code
 
             return redirect('booking_success')
@@ -81,13 +89,13 @@ def booking_success(request):
         'event_link': request.session.pop('event_link', None),
         'booking_name': request.session.pop('last_booking_name', None),
         'booking_when': request.session.pop('last_booking_when', None),
-        # ✅ NEW
+        'booking_guests': request.session.pop('last_booking_guests', None),
         'booking_ref': request.session.pop('last_booking_ref', None),
     }
     return render(request, 'homepageapp/booking_success.html', context)
 
 
-# ✅ NEW: Manage booking (enter reference + email)
+# ✅ Manage booking (enter reference + email)
 def manage_booking(request):
     if request.method == "POST":
         form = FindBookingForm(request.POST)
@@ -97,9 +105,13 @@ def manage_booking(request):
 
             booking_obj = Booking.objects.filter(reference_code=ref, email=email).first()
             if not booking_obj:
-                messages.error(request, "Booking not found. Please check your reference code and email.")
+                messages.error(request, "❌ Booking not found. Please check your reference code and email.")
                 return render(request, "homepageapp/manage_booking.html", {"form": form})
 
+            messages.success(
+                request,
+                f"✅ Booking found: {booking_obj.date} at {booking_obj.time} for {booking_obj.guests} guest(s)."
+            )
             return redirect("booking_detail", reference_code=booking_obj.reference_code)
     else:
         form = FindBookingForm()
@@ -107,35 +119,45 @@ def manage_booking(request):
     return render(request, "homepageapp/manage_booking.html", {"form": form})
 
 
-# ✅ NEW: READ booking
+# ✅ READ booking
 def booking_detail(request, reference_code):
     booking_obj = get_object_or_404(Booking, reference_code=reference_code)
     return render(request, "homepageapp/booking_detail.html", {"booking": booking_obj})
 
 
-# ✅ NEW: UPDATE booking
+# ✅ UPDATE booking
 def booking_update(request, reference_code):
     booking_obj = get_object_or_404(Booking, reference_code=reference_code)
 
     if request.method == "POST":
         form = BookingForm(request.POST, instance=booking_obj)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Booking updated successfully.")
-            return redirect("booking_detail", reference_code=booking_obj.reference_code)
+            updated_booking = form.save()
+
+            # ✅ Specific feedback after update (what is now stored)
+            messages.success(
+                request,
+                f"✅ Booking {updated_booking.reference_code} updated: "
+                f"{updated_booking.date} at {updated_booking.time} for {updated_booking.guests} guest(s)."
+            )
+            return redirect("booking_detail", reference_code=updated_booking.reference_code)
     else:
         form = BookingForm(instance=booking_obj)
 
     return render(request, "homepageapp/booking_update.html", {"form": form, "booking": booking_obj})
 
 
-# ✅ NEW: DELETE booking
+# ✅ DELETE booking
 def booking_delete(request, reference_code):
     booking_obj = get_object_or_404(Booking, reference_code=reference_code)
 
     if request.method == "POST":
+        ref = booking_obj.reference_code
+        when = f"{booking_obj.date} at {booking_obj.time}"
         booking_obj.delete()
-        messages.success(request, "Booking cancelled successfully.")
+
+        # ✅ Specific feedback after delete
+        messages.success(request, f"🗑️ Booking {ref} cancelled (was scheduled for {when}).")
         return redirect("manage_booking")
 
     return render(request, "homepageapp/booking_confirm_delete.html", {"booking": booking_obj})
@@ -152,23 +174,39 @@ def contact(request):
         form = ContactMessageForm(request.POST)
         if form.is_valid():
             try:
-                form.save()
+                msg = form.save()
             except Exception as e:
                 print("[Contact] Save error:", e)
                 messages.error(request, "Sorry, something went wrong saving your message.")
                 return render(request, 'homepageapp/contact.html', {'form': form})
 
-            messages.success(request, "Thanks! Your message has been sent.")
+            # ✅ Specific feedback: confirm what was saved + where reply goes
+            name = form.cleaned_data.get("name")
+            email = form.cleaned_data.get("email")
+            messages.success(
+                request,
+                f"✅ Thanks {name}! Your message has been saved. We’ll reply to {email}."
+            )
+
+            # Optional: store details for the success page
+            request.session["last_contact_name"] = name
+            request.session["last_contact_email"] = email
+
             return redirect('contact_success')
         # invalid: fall through to re-render
     else:
         form = ContactMessageForm()
+
     return render(request, 'homepageapp/contact.html', {'form': form})
 
 
 # 📬 Contact success page
 def contact_success(request):
-    return render(request, 'homepageapp/contact_success.html')
+    context = {
+        "contact_name": request.session.pop("last_contact_name", None),
+        "contact_email": request.session.pop("last_contact_email", None),
+    }
+    return render(request, 'homepageapp/contact_success.html', context)
 
 
 # 🌐 API: Booking
