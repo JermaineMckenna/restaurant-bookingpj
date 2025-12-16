@@ -83,7 +83,7 @@ class ContactMessage(models.Model):
     )
 
     # ✅ NEW: Reference code for message CRUD without login
-    reference_code = models.CharField(max_length=12, unique=True, editable=False)
+    reference_code = models.CharField(max_length=12, unique=True, editable=False, null=True, blank=True)
 
     name = models.CharField(max_length=100)
     email = models.EmailField()
