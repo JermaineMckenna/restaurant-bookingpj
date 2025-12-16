@@ -78,15 +78,12 @@ if os.environ.get('DATABASE_URL'):
 	}
 else:
 	DATABASES = {
-		'default': {
-			'ENGINE': 'django.db.backends.postgresql',
-			'NAME': 'project3rb',
-			'USER': 'jay',
-			'PASSWORD': 'chelsea94',
-			'HOST': 'localhost',
-			'PORT': '5432',
-		}
-	}
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
 {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
