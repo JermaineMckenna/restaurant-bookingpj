@@ -1,5 +1,12 @@
-# Ignore virtual environment and credentials
+# Environment variables
+.env
+*.env
+
+# Credentials / secrets files
+credentials.json
+
+
+# Python / venv
 venv/
 __pycache__/
 *.pyc
-credentials.json
