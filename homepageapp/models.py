@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User  # ✅ Built-in Django user model
+import uuid
 
 
 # 🍽️ Table Model
@@ -29,6 +30,10 @@ class Booking(models.Model):
         null=True,
         blank=True,  # allows bookings without assigning a specific table
     )
+
+    # ✅ NEW: Reference code to allow users to manage bookings without accounts/login
+    reference_code = models.CharField(max_length=12, unique=True, editable=False)
+
     name = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
@@ -37,6 +42,12 @@ class Booking(models.Model):
     guests = models.PositiveIntegerField()
     special_requests = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            # 12-char uppercase reference, e.g. "A1B2C3D4E5F6"
+            self.reference_code = uuid.uuid4().hex[:12].upper()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} - {self.date} at {self.time}"
@@ -77,4 +88,5 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"Message from {self.name} ({self.email})"
+
 

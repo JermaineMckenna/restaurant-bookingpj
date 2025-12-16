@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
-from .forms import BookingForm, ContactMessageForm
+from .forms import BookingForm, ContactMessageForm, FindBookingForm
 from .models import Booking, ContactMessage
 from rest_framework import viewsets
 from .serializers import BookingSerializer, ContactMessageSerializer
@@ -59,10 +59,13 @@ def booking(request):
                     "Your booking was saved, but we couldn’t create a calendar entry this time."
                 )
 
-            # Store the link in session for the success page and redirect
+            # Store info in session for the success page and redirect
             request.session['event_link'] = event_link
             request.session['last_booking_name'] = booking.name
             request.session['last_booking_when'] = f"{booking.date} at {booking.time}"
+
+            # ✅ NEW: Store booking reference so user can manage it later (CRUD)
+            request.session['last_booking_ref'] = booking.reference_code
 
             return redirect('booking_success')
         # If invalid, fall through and re-render with errors
@@ -78,8 +81,64 @@ def booking_success(request):
         'event_link': request.session.pop('event_link', None),
         'booking_name': request.session.pop('last_booking_name', None),
         'booking_when': request.session.pop('last_booking_when', None),
+        # ✅ NEW
+        'booking_ref': request.session.pop('last_booking_ref', None),
     }
     return render(request, 'homepageapp/booking_success.html', context)
+
+
+# ✅ NEW: Manage booking (enter reference + email)
+def manage_booking(request):
+    if request.method == "POST":
+        form = FindBookingForm(request.POST)
+        if form.is_valid():
+            ref = form.cleaned_data["reference_code"]
+            email = form.cleaned_data["email"]
+
+            booking_obj = Booking.objects.filter(reference_code=ref, email=email).first()
+            if not booking_obj:
+                messages.error(request, "Booking not found. Please check your reference code and email.")
+                return render(request, "homepageapp/manage_booking.html", {"form": form})
+
+            return redirect("booking_detail", reference_code=booking_obj.reference_code)
+    else:
+        form = FindBookingForm()
+
+    return render(request, "homepageapp/manage_booking.html", {"form": form})
+
+
+# ✅ NEW: READ booking
+def booking_detail(request, reference_code):
+    booking_obj = get_object_or_404(Booking, reference_code=reference_code)
+    return render(request, "homepageapp/booking_detail.html", {"booking": booking_obj})
+
+
+# ✅ NEW: UPDATE booking
+def booking_update(request, reference_code):
+    booking_obj = get_object_or_404(Booking, reference_code=reference_code)
+
+    if request.method == "POST":
+        form = BookingForm(request.POST, instance=booking_obj)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Booking updated successfully.")
+            return redirect("booking_detail", reference_code=booking_obj.reference_code)
+    else:
+        form = BookingForm(instance=booking_obj)
+
+    return render(request, "homepageapp/booking_update.html", {"form": form, "booking": booking_obj})
+
+
+# ✅ NEW: DELETE booking
+def booking_delete(request, reference_code):
+    booking_obj = get_object_or_404(Booking, reference_code=reference_code)
+
+    if request.method == "POST":
+        booking_obj.delete()
+        messages.success(request, "Booking cancelled successfully.")
+        return redirect("manage_booking")
+
+    return render(request, "homepageapp/booking_confirm_delete.html", {"booking": booking_obj})
 
 
 # 🧱 Base template

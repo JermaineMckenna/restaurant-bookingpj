@@ -47,6 +47,26 @@ class BookingForm(forms.ModelForm):
         return guests
 
 
+# ✅ NEW: Find Booking Form (for managing bookings without login/accounts)
+class FindBookingForm(forms.Form):
+    reference_code = forms.CharField(
+        max_length=12,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Booking reference (e.g. A1B2C3D4E5F6)'
+        })
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Email used for booking'
+        })
+    )
+
+    def clean_reference_code(self):
+        return self.cleaned_data['reference_code'].strip().upper()
+
+
 # 💌 Contact Message Form
 class ContactMessageForm(forms.ModelForm):
     class Meta:
