@@ -82,9 +82,6 @@ class ContactMessage(models.Model):
         related_name="contact_messages",
     )
 
-    # ✅ NEW: Reference code for message CRUD without login
-    reference_code = models.CharField(max_length=12, unique=True, editable=False, null=True, blank=True)
-
     name = models.CharField(max_length=100)
     email = models.EmailField()
     message = models.TextField()
