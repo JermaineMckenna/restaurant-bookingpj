@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='booking',
             name='reference_code',
-            field=models.CharField(default='TEMPREF123456', editable=False, max_length=12, unique=True),
+            field=models.CharField(default='TEMPREF12345', editable=False, max_length=12, unique=True),
             preserve_default=False,
         ),
     ]
