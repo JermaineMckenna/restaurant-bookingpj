@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contactmessage',
             name='reference_code',
-            field=models.CharField(default='TEMPMSG00000', editable=False, max_length=12, unique=True),
+            field=models.CharField(default='TEMPMSG00000', editable=False, max_length=20, unique=True),
             preserve_default=False,
         ),
     ]
