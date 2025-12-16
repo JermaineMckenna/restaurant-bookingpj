@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse
-from .forms import BookingForm, ContactMessageForm, FindBookingForm
+from .forms import (
+    BookingForm,
+    ContactMessageForm,
+    FindBookingForm,
+    FindMessageForm,
+)
 from .models import Booking, ContactMessage, MenuItem
 from rest_framework import viewsets
 from .serializers import BookingSerializer, ContactMessageSerializer
 
-# Import the Google Calendar integration
+# Google Calendar integration
 from .google_calendar import create_event
 from datetime import datetime, timedelta
 import pytz
@@ -17,11 +21,10 @@ def home(request):
     return render(request, 'homepageapp/home.html')
 
 
-# 🍽️ Menu page (now database-driven)
+# 🍽️ Menu page (database-driven)
 def menu(request):
     menu_items = MenuItem.objects.all().order_by("category", "name")
 
-    # Group items in the view so the template can stay clean and show logic clearly
     starters = menu_items.filter(category="starter")
     mains = menu_items.filter(category="main")
     desserts = menu_items.filter(category="dessert")
@@ -37,68 +40,60 @@ def menu(request):
     return render(request, 'homepageapp/menu.html', context)
 
 
-# 📅 Booking form page with Google Calendar integration (uses PRG)
+# 📅 Booking form (Create)
 def booking(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
-            booking = form.save()  # Save booking to database
+            booking_obj = form.save()
 
-            # Prepare datetime for calendar
+            # Calendar event (non-critical)
             tz = pytz.timezone('Europe/London')
-            start_datetime = tz.localize(datetime.combine(booking.date, booking.time))
-            end_datetime = start_datetime + timedelta(hours=2)  # Default slot length
+            start_datetime = tz.localize(datetime.combine(booking_obj.date, booking_obj.time))
+            end_datetime = start_datetime + timedelta(hours=2)
 
-            # google calendar event
             event_link = None
             try:
                 event = create_event(
-                    title=f"Booking: {booking.name}",
+                    title=f"Booking: {booking_obj.name}",
                     start_datetime=start_datetime,
                     end_datetime=end_datetime,
                     description=(
-                        f"Name: {booking.name}\n"
-                        f"Email: {booking.email}\n"
-                        f"Phone: {booking.phone}\n"
-                        f"Guests: {booking.guests}\n"
-                        f"Special Requests: {booking.special_requests or 'N/A'}"
+                        f"Name: {booking_obj.name}\n"
+                        f"Email: {booking_obj.email}\n"
+                        f"Phone: {booking_obj.phone}\n"
+                        f"Guests: {booking_obj.guests}\n"
+                        f"Special Requests: {booking_obj.special_requests or 'N/A'}"
                     )
                 )
                 if isinstance(event, dict):
                     event_link = event.get('htmlLink')
             except Exception as e:
-                # Log server-side; keep UX clean
                 print("⚠️ Google Calendar Error:", e)
                 messages.warning(
                     request,
                     "Your booking was saved, but we couldn’t create a calendar entry this time."
                 )
 
-            # ✅ Immediate & specific feedback about what was stored
             messages.success(
                 request,
-                f"✅ Booking saved: {booking.date} at {booking.time} for {booking.guests} guest(s). "
-                f"Reference: {booking.reference_code}"
+                f"✅ Booking saved: {booking_obj.date} at {booking_obj.time} for {booking_obj.guests} guest(s). "
+                f"Reference: {booking_obj.reference_code}"
             )
 
-            # Store info in session for the success page and redirect
             request.session['event_link'] = event_link
-            request.session['last_booking_name'] = booking.name
-            request.session['last_booking_when'] = f"{booking.date} at {booking.time}"
-            request.session['last_booking_guests'] = booking.guests
-
-            # Store booking reference so user can manage it later (CRUD)
-            request.session['last_booking_ref'] = booking.reference_code
+            request.session['last_booking_name'] = booking_obj.name
+            request.session['last_booking_when'] = f"{booking_obj.date} at {booking_obj.time}"
+            request.session['last_booking_guests'] = booking_obj.guests
+            request.session['last_booking_ref'] = booking_obj.reference_code
 
             return redirect('booking_success')
-        # If invalid, fall through and re-render with errors
     else:
         form = BookingForm()
 
     return render(request, 'homepageapp/booking.html', {'form': form})
 
 
-# ✅ Booking success page (pulls info from session; safe if nothing there)
 def booking_success(request):
     context = {
         'event_link': request.session.pop('event_link', None),
@@ -110,7 +105,7 @@ def booking_success(request):
     return render(request, 'homepageapp/booking_success.html', context)
 
 
-# ✅ Manage booking (enter reference + email)
+# ✅ Booking CRUD (no login) — Locate by reference + email
 def manage_booking(request):
     if request.method == "POST":
         form = FindBookingForm(request.POST)
@@ -134,13 +129,11 @@ def manage_booking(request):
     return render(request, "homepageapp/manage_booking.html", {"form": form})
 
 
-# ✅ READ booking
 def booking_detail(request, reference_code):
     booking_obj = get_object_or_404(Booking, reference_code=reference_code)
     return render(request, "homepageapp/booking_detail.html", {"booking": booking_obj})
 
 
-# ✅ UPDATE booking
 def booking_update(request, reference_code):
     booking_obj = get_object_or_404(Booking, reference_code=reference_code)
 
@@ -148,8 +141,6 @@ def booking_update(request, reference_code):
         form = BookingForm(request.POST, instance=booking_obj)
         if form.is_valid():
             updated_booking = form.save()
-
-            # ✅ Specific feedback after update (what is now stored)
             messages.success(
                 request,
                 f"✅ Booking {updated_booking.reference_code} updated: "
@@ -162,7 +153,6 @@ def booking_update(request, reference_code):
     return render(request, "homepageapp/booking_update.html", {"form": form, "booking": booking_obj})
 
 
-# ✅ DELETE booking
 def booking_delete(request, reference_code):
     booking_obj = get_object_or_404(Booking, reference_code=reference_code)
 
@@ -170,58 +160,103 @@ def booking_delete(request, reference_code):
         ref = booking_obj.reference_code
         when = f"{booking_obj.date} at {booking_obj.time}"
         booking_obj.delete()
-
-        # ✅ Specific feedback after delete
         messages.success(request, f"🗑️ Booking {ref} cancelled (was scheduled for {when}).")
         return redirect("manage_booking")
 
     return render(request, "homepageapp/booking_confirm_delete.html", {"booking": booking_obj})
 
 
-# 🧱 Base template
-def base(request):
-    return render(request, 'homepageapp/base.html')
-
-
-# 📩 Contact form page (PRG with messages)
+# 📩 Contact (Create)
 def contact(request):
     if request.method == 'POST':
         form = ContactMessageForm(request.POST)
         if form.is_valid():
             try:
-                msg = form.save()
+                msg_obj = form.save()
             except Exception as e:
                 print("[Contact] Save error:", e)
                 messages.error(request, "Sorry, something went wrong saving your message.")
                 return render(request, 'homepageapp/contact.html', {'form': form})
 
-            # ✅ Specific feedback: confirm what was saved + where reply goes
             name = form.cleaned_data.get("name")
             email = form.cleaned_data.get("email")
+
             messages.success(
                 request,
-                f"✅ Thanks {name}! Your message has been saved. We’ll reply to {email}."
+                f"✅ Thanks {name}! Your message has been saved. Reference: {msg_obj.reference_code}"
             )
 
-            # Optional: store details for the success page
             request.session["last_contact_name"] = name
             request.session["last_contact_email"] = email
+            request.session["last_contact_ref"] = msg_obj.reference_code
 
             return redirect('contact_success')
-        # invalid: fall through to re-render
     else:
         form = ContactMessageForm()
 
     return render(request, 'homepageapp/contact.html', {'form': form})
 
 
-# 📬 Contact success page
 def contact_success(request):
     context = {
         "contact_name": request.session.pop("last_contact_name", None),
         "contact_email": request.session.pop("last_contact_email", None),
+        "contact_ref": request.session.pop("last_contact_ref", None),
     }
     return render(request, 'homepageapp/contact_success.html', context)
+
+
+# ✅ NEW: Message CRUD (no login) — Locate by reference + email
+def manage_message(request):
+    if request.method == "POST":
+        form = FindMessageForm(request.POST)
+        if form.is_valid():
+            ref = form.cleaned_data["reference_code"]
+            email = form.cleaned_data["email"]
+
+            msg_obj = ContactMessage.objects.filter(reference_code=ref, email=email).first()
+            if not msg_obj:
+                messages.error(request, "❌ Message not found. Please check your reference code and email.")
+                return render(request, "homepageapp/manage_message.html", {"form": form})
+
+            messages.success(request, "✅ Message found.")
+            return redirect("message_detail", reference_code=msg_obj.reference_code)
+    else:
+        form = FindMessageForm()
+
+    return render(request, "homepageapp/manage_message.html", {"form": form})
+
+
+def message_detail(request, reference_code):
+    msg_obj = get_object_or_404(ContactMessage, reference_code=reference_code)
+    return render(request, "homepageapp/message_detail.html", {"message_obj": msg_obj})
+
+
+def message_update(request, reference_code):
+    msg_obj = get_object_or_404(ContactMessage, reference_code=reference_code)
+
+    if request.method == "POST":
+        form = ContactMessageForm(request.POST, instance=msg_obj)
+        if form.is_valid():
+            updated = form.save()
+            messages.success(request, f"✅ Message {updated.reference_code} updated successfully.")
+            return redirect("message_detail", reference_code=updated.reference_code)
+    else:
+        form = ContactMessageForm(instance=msg_obj)
+
+    return render(request, "homepageapp/message_update.html", {"form": form, "message_obj": msg_obj})
+
+
+def message_delete(request, reference_code):
+    msg_obj = get_object_or_404(ContactMessage, reference_code=reference_code)
+
+    if request.method == "POST":
+        ref = msg_obj.reference_code
+        msg_obj.delete()
+        messages.success(request, f"🗑️ Message {ref} deleted successfully.")
+        return redirect("manage_message")
+
+    return render(request, "homepageapp/message_confirm_delete.html", {"message_obj": msg_obj})
 
 
 # 🌐 API: Booking
@@ -234,4 +269,5 @@ class BookingViewSet(viewsets.ModelViewSet):
 class ContactMessageViewSet(viewsets.ModelViewSet):
     queryset = ContactMessage.objects.all().order_by('-created_at')
     serializer_class = ContactMessageSerializer
+
 

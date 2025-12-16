@@ -53,7 +53,6 @@ class BookingForm(forms.ModelForm):
             }),
         }
 
-    # Robust validation: guests limit
     def clean_guests(self):
         guests = self.cleaned_data.get('guests')
         if guests and guests > 20:
@@ -62,7 +61,6 @@ class BookingForm(forms.ModelForm):
             raise forms.ValidationError("Guests must be at least 1.")
         return guests
 
-    # Robust validation: date not in the past
     def clean_date(self):
         booking_date = self.cleaned_data.get("date")
         if booking_date:
@@ -71,27 +69,22 @@ class BookingForm(forms.ModelForm):
                 raise forms.ValidationError("Please choose a date in the future.")
         return booking_date
 
-    # Robust validation: time window + not in past if booking is today
     def clean(self):
         cleaned_data = super().clean()
         booking_date = cleaned_data.get("date")
         booking_time = cleaned_data.get("time")
 
-        # Only validate if both exist
         if booking_date and booking_time:
-            # Example restaurant hours: 11:00–23:00
             opening = time_obj(11, 0)
             closing = time_obj(23, 0)
 
             if booking_time < opening or booking_time > closing:
                 self.add_error("time", "Bookings must be between 11:00 and 23:00.")
 
-            # If booking is today, time cannot be earlier than now
             now = timezone.localtime()
             if booking_date == now.date():
                 selected_dt = datetime.combine(booking_date, booking_time)
                 selected_dt = timezone.make_aware(selected_dt, now.tzinfo)
-
                 if selected_dt < now:
                     self.add_error("time", "Please choose a time later today (in the future).")
 
@@ -118,7 +111,7 @@ class FindBookingForm(forms.Form):
         return self.cleaned_data['reference_code'].strip().upper()
 
 
-# 💌 Contact Message Form
+# 💌 Contact Message Form (create + update)
 class ContactMessageForm(forms.ModelForm):
     class Meta:
         model = ContactMessage
@@ -144,3 +137,24 @@ class ContactMessageForm(forms.ModelForm):
         if len(message.strip()) < 10:
             raise forms.ValidationError("Please enter a bit more detail in your message.")
         return message
+
+
+# ✅ NEW: Find Message Form (manage message without login)
+class FindMessageForm(forms.Form):
+    reference_code = forms.CharField(
+        max_length=12,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Message reference (e.g. A1B2C3D4E5F6)'
+        })
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Email used in the message'
+        })
+    )
+
+    def clean_reference_code(self):
+        return self.cleaned_data['reference_code'].strip().upper()
+

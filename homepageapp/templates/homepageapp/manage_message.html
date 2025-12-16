@@ -1,0 +1,40 @@
+{% extends "homepageapp/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Find a Message{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 720px;">
+  <h2 class="mb-3">Find your message</h2>
+  <p class="text-muted">Enter your message reference code and the email you used.</p>
+
+  <div class="card p-4">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="{{ form.reference_code.id_for_label }}">Reference code</label>
+        {{ form.reference_code|add_class:"form-control" }}
+        {% if form.reference_code.errors %}
+          <div class="text-danger small mt-1">{{ form.reference_code.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="{{ form.email.id_for_label }}">Email</label>
+        {{ form.email|add_class:"form-control" }}
+        {% if form.email.errors %}
+          <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+
+      <button class="btn btn-primary" type="submit">Find message</button>
+      <a class="btn btn-outline-secondary ms-2" href="{% url 'contact' %}">Send a new message</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

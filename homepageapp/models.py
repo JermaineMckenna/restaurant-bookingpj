@@ -31,7 +31,7 @@ class Booking(models.Model):
         blank=True,  # allows bookings without assigning a specific table
     )
 
-    # ✅ NEW: Reference code to allow users to manage bookings without accounts/login
+    # ✅ Reference code to allow users to manage bookings without accounts/login
     reference_code = models.CharField(max_length=12, unique=True, editable=False)
 
     name = models.CharField(max_length=100)
@@ -81,12 +81,22 @@ class ContactMessage(models.Model):
         blank=True,  # user optional
         related_name="contact_messages",
     )
+
+    # ✅ NEW: Reference code for message CRUD without login
+    reference_code = models.CharField(max_length=12, unique=True, editable=False)
+
     name = models.CharField(max_length=100)
     email = models.EmailField()
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            self.reference_code = uuid.uuid4().hex[:12].upper()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Message from {self.name} ({self.email})"
+
 
 
