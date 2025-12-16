@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 from .forms import BookingForm, ContactMessageForm, FindBookingForm
-from .models import Booking, ContactMessage
+from .models import Booking, ContactMessage, MenuItem
 from rest_framework import viewsets
 from .serializers import BookingSerializer, ContactMessageSerializer
 
@@ -17,9 +17,24 @@ def home(request):
     return render(request, 'homepageapp/home.html')
 
 
-# 🍽️ Menu page
+# 🍽️ Menu page (now database-driven)
 def menu(request):
-    return render(request, 'homepageapp/menu.html')
+    menu_items = MenuItem.objects.all().order_by("category", "name")
+
+    # Group items in the view so the template can stay clean and show logic clearly
+    starters = menu_items.filter(category="starter")
+    mains = menu_items.filter(category="main")
+    desserts = menu_items.filter(category="dessert")
+    drinks = menu_items.filter(category="drink")
+
+    context = {
+        "starters": starters,
+        "mains": mains,
+        "desserts": desserts,
+        "drinks": drinks,
+        "menu_count": menu_items.count(),
+    }
+    return render(request, 'homepageapp/menu.html', context)
 
 
 # 📅 Booking form page with Google Calendar integration (uses PRG)
@@ -219,3 +234,4 @@ class BookingViewSet(viewsets.ModelViewSet):
 class ContactMessageViewSet(viewsets.ModelViewSet):
     queryset = ContactMessage.objects.all().order_by('-created_at')
     serializer_class = ContactMessageSerializer
+

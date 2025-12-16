@@ -9,11 +9,20 @@
 <section class="menu-hero-section text-center py-5 bg-light">
     <div class="container">
         <h1 class="display-4 fw-bold mb-3">Our Menu</h1>
-        <p class="lead mb-4">Indulge in the finest Italian cuisine, handcrafted with love and tradition.</p>
+        <p class="lead mb-2">Indulge in the finest Italian cuisine, handcrafted with love and tradition.</p>
+
+        <!-- ✅ Database-driven UI feedback -->
+        <p class="text-muted mb-0">
+            {% if menu_count %}
+                Showing <strong>{{ menu_count }}</strong> menu item{{ menu_count|pluralize }} from our database.
+            {% else %}
+                Our full menu is being updated — please check back soon.
+            {% endif %}
+        </p>
     </div>
 </section>
 
-<!-- Menu Cards Section -->
+<!-- Menu Cards Section (static showcase) -->
 <section class="menu-preview py-5">
     <div class="container text-center">
         <h2 class="fw-bold mb-4">Signature Dishes</h2>
@@ -50,42 +59,82 @@
             </div>
         </div>
 
-        <!-- Additional dishes example -->
-        <h2 class="fw-bold mt-5 mb-4">More Italian Favorites</h2>
-        <div class="row g-4">
-            <!-- Risotto Card -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm">
-                    <img src="{% static 'homepageapp/images/risotto.jpg' %}" class="card-img-top" alt="Risotto">
-                    <div class="card-body">
-                        <h5 class="card-title">Mushroom Risotto</h5>
-                        <p class="card-text text-muted">Creamy risotto with wild mushrooms and parmesan, slow-cooked to perfection.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Bruschetta Card -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm">
-                    <img src="{% static 'homepageapp/images/bruschetta.jpg' %}" class="card-img-top" alt="Bruschetta">
-                    <div class="card-body">
-                        <h5 class="card-title">Classic Bruschetta</h5>
-                        <p class="card-text text-muted">Toasted bread topped with fresh tomatoes, basil, and olive oil — a timeless Italian starter.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Gelato Card -->
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm">
-                    <img src="{% static 'homepageapp/images/gelato.jpg' %}" class="card-img-top" alt="Gelato">
-                    <div class="card-body">
-                        <h5 class="card-title">Italian Gelato</h5>
-                        <p class="card-text text-muted">Smooth, creamy gelato in classic flavors — the perfect sweet finish.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- ✅ Database-driven Menu Section -->
+        <hr class="my-5">
 
-        <a href="{% url 'booking' %}" class="btn btn-danger btn-lg rounded-pill mt-5">Book a Table</a>
+        <h2 class="fw-bold mb-3">Full Menu (Live)</h2>
+        <p class="text-muted mb-4">
+            This section loads menu items from the database and updates automatically when new items are added.
+        </p>
+
+        {% if menu_count %}
+            <!-- Starters -->
+            <div class="text-start mb-5">
+                <h3 class="fw-bold">Starters</h3>
+                <div class="list-group">
+                    {% for item in starters %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ item.name }}</span>
+                            <strong>£{{ item.price }}</strong>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-muted">No starters available yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Mains -->
+            <div class="text-start mb-5">
+                <h3 class="fw-bold">Mains</h3>
+                <div class="list-group">
+                    {% for item in mains %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ item.name }}</span>
+                            <strong>£{{ item.price }}</strong>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-muted">No mains available yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Desserts -->
+            <div class="text-start mb-5">
+                <h3 class="fw-bold">Desserts</h3>
+                <div class="list-group">
+                    {% for item in desserts %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ item.name }}</span>
+                            <strong>£{{ item.price }}</strong>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-muted">No desserts available yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Drinks -->
+            <div class="text-start mb-5">
+                <h3 class="fw-bold">Drinks</h3>
+                <div class="list-group">
+                    {% for item in drinks %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ item.name }}</span>
+                            <strong>£{{ item.price }}</strong>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-muted">No drinks available yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-start">
+                <strong>No menu items found in the database yet.</strong><br>
+                Add some MenuItem records (e.g., via the Django admin) and this page will update automatically.
+            </div>
+        {% endif %}
+
+        <a href="{% url 'booking' %}" class="btn btn-danger btn-lg rounded-pill mt-4">Book a Table</a>
     </div>
 </section>
 
