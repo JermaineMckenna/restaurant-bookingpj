@@ -274,6 +274,16 @@ This data structure supports full CRUD functionality, maintains data integrity t
 
 ![dataschema](homepageapp/static/homepageapp/images/databaseschema.jpg)
 
+## Database-driven Menu System
+
+The menu page dynamically loads items from the database using Django ORM queries.
+Menu items are categorised (Starter, Main, Dessert, Drink) using controlled model choices to ensure consistent filtering and display.
+Any updates made via the Django admin interface are reflected instantly on the live site without code changes.
+
+![datamenu](homepageapp/static/homepageapp/images/datamenu.jpg)
+![datamenu2](homepageapp/static/homepageapp/images/datamenu2.jpg)
+
+
 ### ✍️ Booking Management (Full Crud)
 
 Users can manage their restaurant bookings without creating an account by using a unique booking reference code and their email address.
