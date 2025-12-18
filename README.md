@@ -257,8 +257,48 @@ Django’s built-in admin interface provides a simple way to manage:
 - Integration of table availability logic to prevent double bookings.
 
 - Additional visual enhancements such as image galleries and reviews section.
----
-### 🧰 Technologies Used 
+
+## Database Schema 
+
+The data schema above represents the structure of the restaurant booking system and shows how data is stored and related within the application.
+
+The Booking model is the core of the system and is linked to the User model, allows  users to create, view, update, and delete their own bookings. Each booking stores key information such as the booking date, time slot, and party size.
+
+Customer details are stored separately to allow flexibility in managing contact information and to support future scalability, such as repeat customers or guest bookings.
+
+The MenuItem model is used to store menu data (name, description, and price) and is rendered dynamically on the Menu page. This ensures the application uses database-driven content rather than hard-coded values, allowing menu updates without code changes.
+
+The Review model is linked to bookings and customers, enabling feedback to be associated with completed bookings and supporting future feature expansion.
+
+This data structure supports full CRUD functionality, maintains data integrity through foreign key relationships, and follows Django best practices for relational database design.
+
+![dataschema](homepageapp/static/homepageapp/images/databaseschema.jpg)
+
+### ✍️ Booking Management (Full Crud)
+
+Users can manage their restaurant bookings without creating an account by using a unique booking reference code and their email address.
+
+- **Create:** Users can create a booking using the booking form.
+
+- **Read:** Users can view their booking details on a dedicated booking page.
+
+- **Update:** Users can edit their booking if plans change.
+
+- **Delete:** Users can cancel their booking entirely.
+
+![bookingcreate](homepageapp/static/homepageapp/images/bookingcreate.jpg)
+
+![bookingedit](homepageapp/static/homepageapp/images/bookingedit.jpg)
+
+![bookingcancel](homepageapp/static/homepageapp/images/bookingdelete.jpg)
+
+![bookingnew](homepageapp/static/homepageapp/images/bookingnew.jpg)
+
+![bookingfind](homepageapp/static/homepageapp/images/bookingfind.jpg)
+
+
+
+## 🧰 Technologies Used 
 
 <u>Languages Used</u>
 
@@ -555,6 +595,42 @@ Some third-party responsiveness checkers (e.g., Am I Responsive) were unable to 
 
 - Minor Spacing and Alignment Adjustments:
 During testing, small layout inconsistencies appeared between Safari and Chrome. These were resolved with custom CSS media queries.
+
+### Issues Fixed
+
+Secure Handling of Secret Keys & Enviromental Variables
+
+Prior - 
+
+Secret keys (e.g. SECRET_KEY) were hardcoded or exposed.
+Environment variables were not consistently used.
+Risk of secrets being committed to GitHub.
+
+What was fixed - 
+
+All sensitive values moved to environment variables
+.env file introduced for local development
+.env added to .gitignore
+Heroku config vars used in production
+Application now fails safely if DJANGO_SECRET_KEY is missing.
+
+Why this matters - 
+
+Prevents credential leaks
+Meets assessment criteria 5.3
+Aligns with Django & Heroku best practices
+
+![envfix](homepageapp/static/homepageapp/images/env.jpg)
+
+![gitignore](homepageapp/static/homepageapp/images/gitignore.jpg)
+
+![heroku](homepageapp/static/homepageapp/images/heroku.jpg)
+
+Data/UI -
+
+From the assesor feedback it was picked up that the site had lacked sufficient data process/UI. After analysing the site it was clear there was certain faults, specific times and dates was identified and fixed which now alerts a user if they have input a insufficient date or time or if the resteraunt was booked up on a certain date or time it would also alert the user which now improves UI vastly.
+
+![dataprocess](homepageapp/static/homepageapp/images/datanull.jpg)
 
 ### 👏🏾 Credits
 
